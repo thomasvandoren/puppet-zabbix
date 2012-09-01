@@ -1,0 +1,5 @@
+fixtures:
+  symlinks:
+    "zabbix": "#{source_dir}"
+#   repositories:
+#     "stdlib": "git://github.com/puppetlabs/puppetlabs-stdlib"
