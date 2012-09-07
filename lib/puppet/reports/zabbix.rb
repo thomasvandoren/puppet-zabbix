@@ -88,8 +88,9 @@ Puppet::Reports.register_report(:zabbix) do
       raw_resp = s.read(datalen)
       resp = JSON.load(raw_resp)
       response = resp['response']
+      Puppet.debug "Successfully sent puppet data to zabbix (#{HOST}) for #{self.host}."
     rescue => e
-      # FIXME: log an error to the Puppet.
+      Puppet.debug "Failed to send puppet data to zabbix (#{HOST}) for #{self.host}."
     ensure
       disconnect(s)
     end
