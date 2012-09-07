@@ -1,8 +1,7 @@
+require 'puppet'
 require 'base64'
 require 'json'
-require 'puppet'
 require 'socket'
-require 'yaml'
 
 Puppet::Reports.register_report(:zabbix) do
 
@@ -68,7 +67,7 @@ Puppet::Reports.register_report(:zabbix) do
   def send_items_to_zabbix
     begin
       # Ah, json...
-      request_data = Yajl::Encoder.encode(request)
+      request_data = JSON.dump(request)
 
       # Get an open connection to the zabbix server.
       s = connect
@@ -87,7 +86,7 @@ Puppet::Reports.register_report(:zabbix) do
 
       datalen = s.read(8).unpack('q').shift
       raw_resp = s.read(datalen)
-      resp = Yajl::Parser.parse(raw_resp)
+      resp = JSON.load(raw_resp)
       response = resp['response']
     rescue => e
       # FIXME: log an error to the Puppet.
