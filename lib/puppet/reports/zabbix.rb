@@ -26,12 +26,21 @@ Puppet::Reports.register_report(:zabbix) do
     connection.close unless connection.closed?
   end
 
+  def total_time
+    # Returns the total time metric. Return 0.0 if the status is
+    # failed.
+    return 0.0 if self.status == 'failed'
+    self.metrics['time'].values.each { |val|
+      return val[2] if val[0] = 'total'
+    }
+  end
+
   def data
     # Return a list of objects that meet the zabbix item data spec.
     clock = Time.now.to_i
     return [{
               :host  => self.host,
-              :key   => 'puppet.run.date',
+              :key   => 'puppet.run.timestamp',
               :value => self.time.to_i,
               :clock => clock,
             },
@@ -44,7 +53,7 @@ Puppet::Reports.register_report(:zabbix) do
             {
               :host  => self.host,
               :key   => 'puppet.run.time',
-              :value => self.total,
+              :value => total_time,
               :clock => clock,
             },
             {
@@ -64,9 +73,17 @@ Puppet::Reports.register_report(:zabbix) do
     }
   end
 
+  def zabbix_server_str
+    return "#{HOST}:#{PORT}"
+  end
+
   def send_items_to_zabbix
+    # Send agent style data to zabbix server as specified in the
+    # sender protocol.
+    #
+    #   http://www.zabbix.com/documentation/1.8/protocols/agent
+    #
     begin
-      # Ah, json...
       request_data = JSON.dump(request)
 
       # Get an open connection to the zabbix server.
@@ -79,19 +96,25 @@ Puppet::Reports.register_report(:zabbix) do
       s.write request_data
       s.flush
 
-      # Get the response from the server...
+      # Get the response from the server.
       header = s.read(5)
-
-      # FIXME: ensure header matches expectation.
-
       datalen = s.read(8).unpack('q').shift
       raw_resp = s.read(datalen)
+
+      # Log data from zabbix server response.
       resp = JSON.load(raw_resp)
-      response = resp['response']
-      Puppet.debug "Successfully sent puppet data to zabbix (#{HOST}) for #{self.host}."
+      response = resp.fetch('response')
+      Puppet.debug "Zabbix server responded with info: #{resp.fetch('info')}"
+      if response != 'success'
+        Puppet.warn "Zabbix server (#{zabbix_server_str}) responded with non-success response: #{response}"
+      else
+        Puppet.debug "Successfully sent puppet data to zabbix (#{zabbix_server_str}) for #{self.host}."
+      end
     rescue => e
-      Puppet.debug "Failed to send puppet data to zabbix (#{HOST}) for #{self.host}."
+      Puppet.warn "Failed to send puppet data to zabbix (#{zabbix_server_str}) for #{self.host}."
     ensure
+      # Don't leave the connection open; it can adversely effect
+      # performance on the zabbix server.
       disconnect(s)
     end
   end
