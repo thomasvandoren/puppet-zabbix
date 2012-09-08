@@ -28,7 +28,7 @@ sudo gem install json
 4. Enable pluginsync and reports on your master and clients in
    `puppet.conf`.
 
-```conf
+```ini
 [main]
 report     = true
 pluginsync = true
