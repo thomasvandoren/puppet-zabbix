@@ -7,23 +7,24 @@ A Puppet report handler for sending data from puppet runs to [Zabbix](http://www
 
 Requirements
 ------------
-* `json`
+* `open4`
 * `puppet`
+* `zabbix_sender` binary (comes with zabbix-agent packages, usually)
 
 Installation and Usage
 ----------------------
 ### Puppet Master and Agents
-1. Install the `json` gem on the puppet master.
+1. Install the `open4` gem on the puppet master.
 
 ```bash
-sudo gem install json
+sudo gem install open4
 ```
 
 2. Install puppet-zabbix as a module in your puppet master's module
    path.
 
-3. Update the `zabbix_host` and `zabbix_port` variables in
-   `zabbix.yaml`. Copy `zabbix.yaml` to `/etc/puppet`.
+3. Update the `zabbix_host`, `zabbix_port`, and `zabbix_sender`
+   variables in `zabbix.yaml`. Copy `zabbix.yaml` to `/etc/puppet`.
 
 4. Enable pluginsync and reports on your master and clients in
    `puppet.conf`.
