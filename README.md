@@ -1,5 +1,6 @@
 Zabbix Report Processor
 =======================
+[![Build Status](https://secure.travis-ci.org/thomasvandoren/puppet-zabbix.png)](http://travis-ci.org/thomasvandoren/puppet-zabbix)
 
 Description
 -----------
