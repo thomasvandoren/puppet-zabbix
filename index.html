@@ -42,30 +42,33 @@
 
 <h2>Description</h2>
 
-<p>A Puppet report handler for sending data from puppet runs to <a href="http://www.zabbix.com/">Zabbix</a>.</p>
+<p>A Puppet report handler for sending data from puppet runs to
+<a href="http://www.zabbix.com/">Zabbix</a>.</p>
 
 <h2>Requirements</h2>
 
 <ul>
-<li><code>json</code></li>
+<li><code>open4</code></li>
 <li><code>puppet</code></li>
+<li>
+<code>zabbix_sender</code> binary (comes with zabbix-agent packages, usually)</li>
 </ul><h2>Installation and Usage</h2>
 
 <h3>Puppet Master and Agents</h3>
 
-<ol>
-<li>Install the <code>json</code> gem on the puppet master.</li>
-</ol><div class="highlight"><pre>sudo gem install json
+<ul>
+<li>Install the <code>open4</code> gem on the puppet master.</li>
+</ul><div class="highlight"><pre>sudo gem install open4
 </pre></div>
 
-<ol>
+<ul>
 <li><p>Install puppet-zabbix as a module in your puppet master's module
 path.</p></li>
-<li><p>Update the <code>zabbix_host</code> and <code>zabbix_port</code> variables in
-<code>zabbix.yaml</code>. Copy <code>zabbix.yaml</code> to <code>/etc/puppet</code>.</p></li>
+<li><p>Update the <code>zabbix_host</code>, <code>zabbix_port</code>, and <code>zabbix_sender</code>
+variables in <code>zabbix.yaml</code>. Copy <code>zabbix.yaml</code> to <code>/etc/puppet</code>.</p></li>
 <li><p>Enable pluginsync and reports on your master and clients in
 <code>puppet.conf</code>.</p></li>
-</ol><div class="highlight"><pre><span class="k">[main]</span>
+</ul><div class="highlight"><pre><span class="k">[main]</span>
 <span class="na">report</span>     <span class="o">=</span> <span class="s">true</span>
 <span class="na">pluginsync</span> <span class="o">=</span> <span class="s">true</span>
 
@@ -73,16 +76,16 @@ path.</p></li>
 <span class="na">reports</span> <span class="o">=</span> <span class="s">zabbix</span>
 </pre></div>
 
-<ol>
+<ul>
 <li>Run the puppet client to sync the report as a plugin.</li>
-</ol><h3>Zabbix</h3>
+</ul><h3>Zabbix</h3>
 
-<ol>
+<ul>
 <li><p>Import the zabbix template in <code>doc/zabbix_template.xml</code>.</p></li>
 <li><p>Link the template to hosts managed by puppet. Note that the
 "technical" host name will need to match the puppet certname
 (defaults to FQDN) for each host.</p></li>
-</ol><h2>Author</h2>
+</ul><h2>Author</h2>
 
 <p>Thomas Van Doren</p>
 
